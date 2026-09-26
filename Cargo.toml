@@ -1,0 +1,15 @@
+[package]
+name = "lf_pico_rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libc = "0.2"
+nix = "0.31.3"
+rknpu2 = "0.0.9"
+v4l = { git = "https://github.com/ColumKam/libv4l-rs.git" }
+[profile.dev]
+panic="abort"
+
+[profile.release]
+panic = "abort"

@@ -1,0 +1,12 @@
+pub const RK_VIDEO_ID_AVC: u32 = 8;                    
+pub const VENC_RC_MODE_H264CBR: u32 = 1;              
+pub const RK_FMT_YUV420SP: u32 = 0;                 
+pub const VIDEO_FIELD_FRAME: u32 = 4;
+pub const VIDEO_FORMAT_LINEAR: u32 = 0;
+pub const COMPRESS_MODE_NONE: u32 = 0;
+pub const DYNAMIC_RANGE_SDR8: u32 = 0;
+pub const COLOR_GAMUT_BT601: u32 = 0;
+pub const RK_MAX_COLOR_COMPONENT: usize = 2;    
+pub const VI_V4L2_MEMORY_TYPE_MMAP: u32 = 1;
+pub const VI_V4L2_MEMORY_TYPE_DMABUF: u32 = 4;
+pub const MAX_VI_ENTITY_NAME_LEN: usize = 32;
