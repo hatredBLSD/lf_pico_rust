@@ -232,35 +232,6 @@ pub unsafe fn get_venc_jpeg(){
 	}
 }
 
-//вот пример для канваса через него надо делать и рисовать динамическое осд
-		// #if 0
-		// 	/*********************************************
-		// 	step 4: use update canvas interface
-		// 	*********************************************/
-		// 	s64ShowBmpStart = TEST_COMM_GetNowUs();
-
-		// 	RGN_CANVAS_INFO_S stCanvasInfo;
-		// 	memset(&stCanvasInfo, 0, sizeof(RGN_CANVAS_INFO_S));
-
-		// 	s32Ret = RK_MPI_RGN_GetCanvasInfo(RgnHandle, &stCanvasInfo);
-		// 	if (s32Ret != RK_SUCCESS) {
-		// 		RK_LOGE("RK_MPI_RGN_GetCanvasInfo failed with %#x!", s32Ret);
-		// 		return RK_FAILURE;
-		// 	}
-		// 	memset(reinterpret_cast<void *>(stCanvasInfo.u64VirAddr), 0xff,
-		// 					stCanvasInfo.u32VirWidth * stCanvasInfo.u32VirHeight >> 2);
-		// 	s32Ret = RK_MPI_RGN_UpdateCanvas(RgnHandle);
-		// 	if (s32Ret != RK_SUCCESS) {
-		// 		RK_LOGE("RK_MPI_RGN_UpdateCanvas failed with %#x!", s32Ret);
-		// 		return RK_FAILURE;
-		// 	}
-		// 	s64ShowBmpEnd = TEST_COMM_GetNowUs();
-		// 	RK_LOGI("Handle:%d, space time %lld us, update canvas success!", RgnHandle, s64ShowBmpEnd - s64ShowBmpStart);
-		// #endif
-
-		// 	return 0;
-		// }
-
 pub fn get_cam_stream(){
 	let heandle = std::thread::Builder::new().name("MJPEG STREAME".to_string()).spawn(move || {
 		unsafe{
@@ -288,8 +259,8 @@ pub fn get_cam_stream(){
 
 			jpeg_param.q_factor = 77;
 			RK_MPI_VENC_SetJpegParam(0,&jpeg_param);
-
-			//rgn_overlay_procces(1920,1080);
+			
+			rgn_overlay_start(32, 32);
 
 			loop{
 				let mut frame = std::mem::zeroed::<VencStream>();
@@ -297,6 +268,7 @@ pub fn get_cam_stream(){
 				frame.pst_pack = Box::into_raw(pack);
 				ret = RK_MPI_VENC_GetStream(0, &mut frame, 1000);
 				if ret == 0{
+					rgn_overlay_procces(32, 32);
 					let adr = RK_MPI_MB_Handle2VirAddr((*frame.pst_pack).p_mb_blk) as *const u8;
 					let data_size = (*frame.pst_pack).len as usize;
 					let data_slice = std::slice::from_raw_parts(adr,data_size);
@@ -329,8 +301,7 @@ pub fn get_cam_stream(){
 	});
 }
 
-#[inline(never)]
-pub fn rgn_overlay_procces(width:u32,height:u32){
+pub fn rgn_overlay_start(width:u32,height:u32){
 	unsafe{
 		let rgn_handle: u32 = 0;
 
@@ -340,16 +311,68 @@ pub fn rgn_overlay_procces(width:u32,height:u32){
 		rgn_attr.attr_union.overlay_attr.size.u32_width = width;
 		rgn_attr.attr_union.overlay_attr.size.u32_height = height;
 		rgn_attr.attr_union.overlay_attr.clut_num = 0;
+		rgn_attr.attr_union.overlay_attr.canvas_num = 2;
 
 		let mut ret = RK_MPI_RGN_Create(rgn_handle, &rgn_attr);
-		
+		println!("RGN CREATE RET {}",ret);
+
+		let mut mpp_chn = std::mem::zeroed::<MppChnS>();
+		mpp_chn.en_mod_id = RkModIdE::RkIdVenc;
+		mpp_chn.s32_dev_id = 0;
+		mpp_chn.s32_chn_id = 0;
+
+		let mut rgn_chn_attr = std::mem::zeroed::<RgnChnAttr>();
+		rgn_chn_attr.show = 1;
+		rgn_chn_attr.rgn_type = RgnTypeE::OverlayRgn;
+		rgn_chn_attr.chn_attr_union.overlay_chn.point.x = 1920/2;
+		rgn_chn_attr.chn_attr_union.overlay_chn.point.y = 1080/2;
+		rgn_chn_attr.chn_attr_union.overlay_chn.bg_alpha = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.fg_alpha = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.layer = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.qp_info.enable = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.qp_info.force_intra = 1;
+		rgn_chn_attr.chn_attr_union.overlay_chn.qp_info.abs_qp = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.qp_info.qp = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.color_lut[0] = 0x00;
+		rgn_chn_attr.chn_attr_union.overlay_chn.color_lut[1] = 0xFFFFFF;
+		rgn_chn_attr.chn_attr_union.overlay_chn.invert_color.inv_col_enable = 0;
+		rgn_chn_attr.chn_attr_union.overlay_chn.invert_color.inv_col_area.u32_width = 16;
+		rgn_chn_attr.chn_attr_union.overlay_chn.invert_color.inv_col_area.u32_height = 16;
+		rgn_chn_attr.chn_attr_union.overlay_chn.invert_color.chg_mod = InvertColorModeE::LessthanLumThresh;
+		rgn_chn_attr.chn_attr_union.overlay_chn.invert_color.lum_thresh = 100;
 
 
+		ret = RK_MPI_RGN_AttachToChn(rgn_handle, &mpp_chn, &rgn_chn_attr);
+
+		println!("ATTACH RET {}",ret);
+	}
+}
+
+pub fn rgn_overlay_procces(width:u32,height:u32){ //размеры кратны 16
+	unsafe{
 	
 		let mut canvas_info = std::mem::zeroed::<RgnCanvasInfo>();
-		ret = RK_MPI_RGN_GetCanvasInfo(rgn_handle, &mut canvas_info);
-		println!("RET {}",ret);
-		println!("CANVAS INFO {:?}",canvas_info);
+
+		let mut ret = RK_MPI_RGN_GetCanvasInfo(0, &mut canvas_info);
+		// println!("CANVAS INFO {:?}",canvas_info);
+		// println!("logical: {}x{}, virtual: {}x{}", 
+		// canvas_info.width, canvas_info.height,
+		// canvas_info.size.u32_width, canvas_info.size.u32_height);
+		let ptr = canvas_info.addr as *mut u32;
+		let size = (canvas_info.width * canvas_info.height) as usize;
+		let slice = std::slice::from_raw_parts_mut(ptr, size);
+		slice.fill(0x0000FFFF);
+
+		// Красный	0x0000FFFF
+		// Зелёный	0x0000FF00
+		// Синий	0x00FF0000
+		// Белый	0xFFFFFFFF
+		// Чёрный	0xFF000000
+
+		ret = RK_MPI_RGN_UpdateCanvas(0);
+
+		// println!("CANVAS UPDATE RET {}",ret);
 
 	}
 }
+

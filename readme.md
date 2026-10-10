@@ -3,9 +3,9 @@
 
 
 ## Implemented
-### VI Init |  VENC Init | MJPEG TCP Stream
+### VI Init |  VENC Init | MJPEG TCP Stream | RGN OSD
 
 ## In terms of...
 
-### RKNN Example + RGA Example + H264/H265
+### RKNN Example + H264/H265
 

@@ -13,8 +13,8 @@ pub type RkS32 = i32;
 #[derive(Clone, Copy)]
 pub struct PointS
 {
-    x: RkS32 ,
-    y: RkS32
+    pub x: RkS32 ,
+    pub y: RkS32
 } 
 
 
@@ -809,27 +809,27 @@ pub struct OverlayAttr {
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Bitmap {
-    pixel_format:PixelFormatE,
-    widht: u32,
-    height: u32,
-    p_data: *mut std::ffi::c_void,
+    pub pixel_format:PixelFormatE,
+    pub widht: u32,
+    pub height: u32,
+    pub p_data: *mut std::ffi::c_void,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct RgnChnAttr {
-    show: u32, //RkBool
-    rgn_type: RgnTypeE,
-    chn_attr_union: RgnChnAttrUnion
+    pub show: u32, //RkBool
+    pub rgn_type: RgnTypeE,
+    pub chn_attr_union: RgnChnAttrUnion
 } 
 
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub union RgnChnAttrUnion {
-    overlay_chn: OverlayChnAttr,
-    cover_chn: CoverChnAttr,
-    mosaic_chn: MosaicChnAttr,
-    line_chn: LineChnAttr
+    pub overlay_chn: OverlayChnAttr,
+    pub cover_chn: CoverChnAttr,
+    pub mosaic_chn: MosaicChnAttr,
+    pub line_chn: LineChnAttr
 } 
 
 
