@@ -2,12 +2,15 @@
 name = "lf_pico_rust"
 version = "0.1.0"
 edition = "2024"
+[[bin]]
+name = "lf_pico_rust"
+path = "src/main.rs"
 
 [dependencies]
 libc = "0.2"
 nix = "0.31.3"
+rknn-rs = "0.2.4"
 rknpu2 = "0.0.9"
-v4l = { git = "https://github.com/ColumKam/libv4l-rs.git" }
 [profile.dev]
 panic="abort"
 

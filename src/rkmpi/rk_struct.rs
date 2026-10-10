@@ -10,6 +10,15 @@ pub type RkS32 = i32;
 //==================================RK MPI COMMON==========================================
 
 #[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PointS
+{
+    x: RkS32 ,
+    y: RkS32
+} 
+
+
+#[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RkModIdE {
     RkIdCmpi    = 0,
@@ -161,13 +170,78 @@ pub enum CompressModeE {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PixelFormatE {
-    PixelFormatYuvSemiplanar420 = 0,
-    PixelFormatYuvSemiplanar422 = 1,
-    PixelFormatYuvFourccNv12 = 2,
-    PixelFormatButt,
+    RkFmtYuv420Sp         = 0x00000000,
+    RkFmtYuv420Sp10Bit    = 0x00000001,
+    RkFmtYuv422Sp         = 0x00000002,
+    RkFmtYuv422Sp10Bit    = 0x00000003,
+    RkFmtYuv420P          = 0x00000004,
+    RkFmtYuv420PVu        = 0x00000005,
+    RkFmtYuv420SpVu       = 0x00000006,
+    RkFmtYuv422P          = 0x00000007,
+    RkFmtYuv422SpVu       = 0x00000008,
+    RkFmtYuv422Yuyv       = 0x00000009,
+    RkFmtYuv422Uyvy       = 0x0000000a,
+    RkFmtYuv400Sp         = 0x0000000b,
+    RkFmtYuv440Sp         = 0x0000000c,
+    RkFmtYuv411Sp         = 0x0000000d,
+    RkFmtYuv444           = 0x0000000e,
+    RkFmtYuv444Sp         = 0x0000000f,
+    RkFmtYuv444P          = 0x00000010,
+    RkFmtYuv422Yvyu       = 0x00000011,
+    RkFmtYuv422Vyuy       = 0x00000012,
+    RkFmtYuvButt          = 0x00000013,
+
+    RkFmtRgb565           = 0x00010000,
+    RkFmtBgr565           = 0x00010001,
+    RkFmtRgb555           = 0x00010002,
+    RkFmtBgr555           = 0x00010003,
+    RkFmtRgb444           = 0x00010004,
+    RkFmtBgr444           = 0x00010005,
+    RkFmtRgb888           = 0x00010006,
+    RkFmtBgr888           = 0x00010007,
+    RkFmtRgb101010        = 0x00010008,
+    RkFmtBgr101010        = 0x00010009,
+    RkFmtArgb1555         = 0x0001000a,
+    RkFmtAbgr1555         = 0x0001000b,
+    RkFmtArgb4444         = 0x0001000c,
+    RkFmtAbgr4444         = 0x0001000d,
+    RkFmtArgb8565         = 0x0001000e,
+    RkFmtAbgr8565         = 0x0001000f,
+    RkFmtArgb8888         = 0x00010010,
+    RkFmtAbgr8888         = 0x00010011,
+    RkFmtBgra8888         = 0x00010012,
+    RkFmtRgba8888         = 0x00010013,
+    RkFmtRgba5551         = 0x00010014,
+    RkFmtBgra5551         = 0x00010015,
+    RkFmtBgra4444         = 0x00010016,
+    RkFmtRgba4444         = 0x00010017,
+    RkFmtXbgr8888         = 0x00010018,
+    RkFmtRgbButt          = 0x00010019,
+
+    RkFmt2Bpp             = 0x0001001a,
+
+    RkFmtRgbBayerSbggr8Bpp  = 0x00020000,
+    RkFmtRgbBayerSgbrg8Bpp  = 0x00020001,
+    RkFmtRgbBayerSgrbg8Bpp  = 0x00020002,
+    RkFmtRgbBayerSrggb8Bpp  = 0x00020003,
+    RkFmtRgbBayerSbggr10Bpp = 0x00020004,
+    RkFmtRgbBayerSgbrg10Bpp = 0x00020005,
+    RkFmtRgbBayerSgrbg10Bpp = 0x00020006,
+    RkFmtRgbBayerSrggb10Bpp = 0x00020007,
+    RkFmtRgbBayerSbggr12Bpp = 0x00020008,
+    RkFmtRgbBayerSgbrg12Bpp = 0x00020009,
+    RkFmtRgbBayerSgrbg12Bpp = 0x0002000a,
+    RkFmtRgbBayerSrggb12Bpp = 0x0002000b,
+    RtFmtRgbBayer14Bpp      = 0x0002000c,
+    RkFmtRgbBayerSbggr16Bpp = 0x0002000d,
+    RkFmtRgbBayerSgbrg16Bpp = 0x0002000e,
+    RkFmtRgbBayerSgrbg16Bpp = 0x0002000f,
+    RkFmtRgbBayerSrggb16Bpp = 0x00020010,
+    RkFmtRgbBayerButt       = 0x00020011,
 }
+
 
 //==================================RK MPI VI==========================================
 
@@ -219,7 +293,7 @@ pub struct ViIspOptS {
 #[derive(Debug, Copy, Clone)]
 pub struct ViChnAttr {
     pub st_size: SizeS,
-    pub en_pixel_format: u32,    
+    pub en_pixel_format: PixelFormatE,    
     pub en_dynamic_range: u32,  
     pub en_video_format: u32,    
     pub en_compress_mode: u32,   
@@ -695,3 +769,158 @@ pub enum H264EProfile {
     H264eProfileHigh               = 100,
     H264eProfileButt
 } 
+
+//==================================RK MPI VENC==========================================
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct RgnAttr {
+    pub rgn_type_e: RgnTypeE,
+    pub attr_union: RgnAttrUnion  
+} 
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RgnTypeE {
+    OverlayRgn = 0,
+    OverlayExRgn,
+    CoverRgn,
+    MosaicRgn,
+    LineRgn,
+    RgnButt
+} 
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub union RgnAttrUnion {
+    pub overlay_attr: OverlayAttr ,
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct OverlayAttr {
+    pub pixel_format: PixelFormatE,
+    pub size: SizeS,
+    pub canvas_num: u32,
+    pub clut_num: u32,
+    pub clut: [u32; RGN_CLUT_NUM],
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct Bitmap {
+    pixel_format:PixelFormatE,
+    widht: u32,
+    height: u32,
+    p_data: *mut std::ffi::c_void,
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct RgnChnAttr {
+    show: u32, //RkBool
+    rgn_type: RgnTypeE,
+    chn_attr_union: RgnChnAttrUnion
+} 
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub union RgnChnAttrUnion {
+    overlay_chn: OverlayChnAttr,
+    cover_chn: CoverChnAttr,
+    mosaic_chn: MosaicChnAttr,
+    line_chn: LineChnAttr
+} 
+
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct OverlayChnAttr {
+    pub point: PointS,
+    pub fg_alpha: u32,
+    pub bg_alpha: u32,
+    pub layer: u32, 
+    pub qp_info: OverlayQpInfo,
+    pub color_lut: [u32;RGN_COLOR_LUT_NUM],
+    pub invert_color: OverlayInvertColor
+} 
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct OverlayQpInfo {
+    pub enable: u32, //RkBool
+    pub abs_qp: u32, //RkBool
+    pub force_intra: u32, //RkBool
+    pub qp: RkS32, 
+} 
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct OverlayInvertColor {
+    pub inv_col_area: SizeS,
+    pub lum_thresh: u32,
+    pub chg_mod: InvertColorModeE,
+    pub inv_col_enable: u32, //RkBool
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InvertColorModeE {
+    LessthanLumThresh = 0,
+    MorethanLumThresh,
+    InverColorButt
+}
+
+#[repr(C)]
+#[derive(Clone,Copy)]
+pub struct CoverChnAttr {
+    pub rect: RectS,
+    pub color: u32,
+    pub layer: u32,
+    pub coordinate: RgnCoordinateE
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RgnCoordinateE {
+    RgbAbsCoor = 0,   
+    RgnRatioCoor      
+} 
+
+#[repr(C)]
+#[derive(Clone,Copy)]
+pub struct MosaicChnAttr {
+    pub rect: RectS,
+    pub blk_size: MosaikBlkSizeE,
+    pub layer: u32
+} 
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MosaikBlkSizeE {
+    MosaicBlkSize8 = 0,    
+    MosaicBlkSize16,       
+    MosaicBlkSize32,       
+    MosaicBlkSize64,       
+    MosaicBlkSizeButt
+} 
+
+#[repr(C)]
+#[derive(Clone,Copy)]
+pub struct LineChnAttr {
+    pub thick: u32,
+    pub color: u32,
+    pub start_point: PointS,
+    pub end_point: PointS
+}
+
+#[repr(C)]
+#[derive(Clone,Copy,Debug)]
+pub struct RgnCanvasInfo{
+    pub canvas_blk:*mut libc::c_void, 
+    pub addr: u64,
+    pub size: SizeS,
+    pub width: u32,
+    pub height: u32,
+    pub pixel_format: PixelFormatE
+}

@@ -62,6 +62,16 @@ unsafe extern "C" {
     pub fn RK_MPI_VENC_StopRecvFrame(chn: i32) -> i32;
 	pub fn RK_MPI_VENC_DestroyChn(chn: i32) -> i32;
 
+    //==================================RK MPI RGN==========================================
+    pub fn RK_MPI_RGN_Create(handle:u32, rgn_attr: *const RgnAttr) -> i32;
+    pub fn RK_MPI_RGN_Destroy(handle:u32) -> i32;
+    pub fn RK_MPI_RGN_GetAttr(handle:u32,rgn_attr: *mut RgnAttr) -> i32;
+    pub fn RK_MPI_RGN_SetAtty(handle:u32,rgn_attr: *const RgnAttr) -> i32;
+    pub fn RK_MPI_RGN_SetBitMap(handle:u32,bitmap: Bitmap) -> i32;
+    pub fn RK_MPI_RGN_AttachToChn(handle:u32,chn: MppChnS,rgn_chn_att: RgnChnAttr) -> i32;
+    pub fn RK_MPI_RGN_DetachFromChn(handle:u32,chn: MppChnS) -> i32;
+    pub fn RK_MPI_RGN_GetCanvasInfo(handle:u32,canvas_info: *mut RgnCanvasInfo) -> i32;
+    pub fn RK_MPI_RGN_UpdateCanvas(handle:u32) -> i32;
 
    
 }

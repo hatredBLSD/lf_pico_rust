@@ -10,3 +10,5 @@ pub const RK_MAX_COLOR_COMPONENT: usize = 2;
 pub const VI_V4L2_MEMORY_TYPE_MMAP: u32 = 1;
 pub const VI_V4L2_MEMORY_TYPE_DMABUF: u32 = 4;
 pub const MAX_VI_ENTITY_NAME_LEN: usize = 32;
+pub const RGN_CLUT_NUM: usize = 256;
+pub const RGN_COLOR_LUT_NUM: usize = 2;
